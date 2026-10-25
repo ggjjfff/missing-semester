@@ -440,7 +440,13 @@ source ~/catkin_ws/devel/setup.bash
 
 不 source 的话，`rosrun` 找不到你刚编译的包。想省事就写进 `~/.bashrc`。
 
-我理解这一步的必要性来自上面对 `devel` 的定位：编译产物不在系统默认的搜索路径里，得靠这个脚本把路径塞进环境变量。**具体是哪个环境变量，因为没装 ROS 我还没验证过**，留个 TODO 以后补。
+我理解这一步的必要性来自上面对 `devel` 的定位：编译产物不在系统默认的搜索路径里，得靠这个脚本把路径塞进环境变量。
+
+**这里有个我发现的问题**：我把 PPT 18 页的文字全过了一遍，`source`、`setup.bash`、`ROS_PACKAGE_PATH` 这几个词**一次都没出现**。PPT 只讲了 `devel` 是「放置开发过程中的可执行文件和库」，但没讲这些文件怎么才能被 `rosrun` 找到。
+
+也就是说，照着 PPT 敲完 `catkin build` 就去 `rosrun`，是会找不到包的。这一步必须自己补。
+
+按文档，`setup.bash` 做的事是往 `ROS_PACKAGE_PATH` 这类环境变量里追加 `devel` 相关路径。**因为没装 ROS，我没有实测过**，这一句只是我读文档的理解。
 
 > ✍️ 这里我先不写「我忘了 source 然后报错」，因为真没跑过。等装了 ROS 再补。
 
@@ -553,7 +559,34 @@ cmake .. -DENABLE_LOGGING=OFF
 
 一个 catkin 包必须满足三条：有 `package.xml`、有 `CMakeLists.txt`、**每个包一个独立文件夹**（不能嵌套）。
 
-> ✍️ 和 PPT 讲的差别：TODO（比如 PPT 没讲 msg/srv，官方教程里占了很大篇幅）
+**和 PPT 讲的差别**（我把 PPT 18 页文字逐页过了一遍，下面这些是搜出来的结果）：
+
+| 内容 | PPT | 官方教程 |
+|---|---|---|
+| 建工作空间 | ✅ P6 | ✅ |
+| 建功能包 | ✅ P7 | ✅ |
+| `source devel/setup.bash` | ❌ 完全没提 | ✅ 讲了 |
+| `package.xml` 里写什么 | ❌ 没打开过 | ✅ 有专门章节 |
+| `rospack` / `rosdep` 查依赖 | ❌ 没提 | ✅ |
+| 写 publisher / subscriber | ❌ | ✅ |
+| msg / srv 自定义消息 | ❌ | ✅ 占很大篇幅 |
+| launch 文件 | ❌ | ✅ |
+| 编译命令 | `catkin build`（P6） | 主要用 `catkin_make` |
+
+搜 `msg`、`srv`、`launch`、`package.xml`、`rospack`、`source`、`setup.bash` 这几个词在 18 页 XML 里的出现次数，除了 `std_msgs` 里那个 `msg`，其余全是 **0**。
+
+所以我的判断是：**PPT 只覆盖到「能建出一个空包」，官方教程才管「这个包能跑起来」。** 中间那段（写节点、定义消息、写 launch、让它被找到）全在官方教程里。
+
+另外 PPT P6 那几行命令有个小笔误：
+
+```bash
+mkdir catkin_ws
+cd /catkin_ws && mkdir src     # ← 这里多了个斜杠
+```
+
+前面 `mkdir catkin_ws` 是相对路径（建在当前目录），后面 `cd /catkin_ws` 却是绝对路径（去根目录）。中间只有一个 `/` 的差别，但后者会跑到文件系统的根上去，普通用户没权限在那里建 `src`。应该是 `cd catkin_ws` 或者 `cd ~/catkin_ws`。
+
+> ✍️ 抄 PPT 命令的时候真的要看一眼，这种一个字符的错误抄下来就跑不通，还很难查。
 
 ### 5.4 The Emperor Has No Clothes
 
