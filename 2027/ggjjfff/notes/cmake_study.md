@@ -1,8 +1,6 @@
 # 第二课学习笔记：CMake 与 catkin
 
 > 课程：27 赛季控制视觉招新培训第二课
-> 作者：YOURNAME
-> 日期：2026-10-2X
 >
 > 说明：这份笔记是我边跑命令边记的。命令都是我实际敲过的，输出也是从终端里直接拷的。
 > `✍️` 标记的地方是我自己的理解和感受，还没写完的部分我会标 `TODO`。
@@ -245,7 +243,7 @@ $ cmake ..
 -- Detecting CXX compile features - done
 -- Configuring done (0.5s)
 -- Generating done (0.1s)
--- Build files have been written to: /home/gjf/lesson2_lab/build
+-- Build files have been written to: ~/lesson2_lab/build
 ```
 
 我数了一下，`--` 开头的行有九行，全是「Detecting / Check / Configuring / Generating」这种状态提示。**没有一行在编译我的代码**——它到 `Generating done` 就停了。真正的编译是后面 `make` 干的事。
@@ -260,7 +258,7 @@ CMake Warning:
    "."
 
 
-CMake Error: The source directory "/home/gjf/lesson2_lab/build" does not appear to contain CMakeLists.txt.
+CMake Error: The source directory "~/lesson2_lab/build" does not appear to contain CMakeLists.txt.
 Specify --help for usage, or press the help button on the CMake GUI.
 ```
 
@@ -312,7 +310,7 @@ target_link_libraries(diff_drive_cmake PRIVATE diff_drive_lib)
 $ cmake .. && make
 [ 50%] Built target diff_drive_lib
 [ 75%] Building CXX object CMakeFiles/diff_drive_cmake.dir/src/main.cpp.o
-/home/gjf/lesson2_lab/src/main.cpp:2:10: fatal error: diff_drive.h: No such file or directory
+~/lesson2_lab/src/main.cpp:2:10: fatal error: diff_drive.h: No such file or directory
     2 | #include "diff_drive.h"
       |          ^~~~~~~~~~~~~~
 compilation terminated.
